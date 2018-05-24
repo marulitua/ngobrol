@@ -10,6 +10,8 @@ var upgrader = websocket.Upgrader{}
 
 func main() {
     //fmt.Println("Hello World")
+    hub := hubGenerator()
+    go hub.watch()
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
         if r.Method != "GET" {
