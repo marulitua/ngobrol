@@ -1,7 +1,7 @@
 package main
 
 import (
-    //"fmt"
+    "log"
     "net/http"
     "github.com/gorilla/websocket"
 )
@@ -11,7 +11,13 @@ var upgrader = websocket.Upgrader{}
 func main() {
     //fmt.Println("Hello World")
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-        http.ServeFile(w, r, "index.html")
+
+        if r.Method != "GET" {
+                http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+                return
+        }
+
+        http.ServeFile(w, r, "public/index.html")
     })
 
     http.HandleFunc("/v1/ws", func(w http.ResponseWriter, r *http.Request) {
@@ -25,5 +31,10 @@ func main() {
         }(conn)
     })
 
-    http.ListenAndServe(":3000", nil)//handler http.Handler)
+    port := ":3000"
+    log.Println("Server started on", port)
+    err := http.ListenAndServe(port, nil)
+    if err != nil {
+        log.Fatal("ListenAndServe: ", err)
+    }
 }
