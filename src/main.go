@@ -3,13 +3,10 @@ package main
 import (
     "log"
     "net/http"
-    "github.com/gorilla/websocket"
 )
 
-var upgrader = websocket.Upgrader{}
-
 func main() {
-    //fmt.Println("Hello World")
+    log.Println("Hello World")
     hub := hubGenerator()
     go hub.watch()
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -23,14 +20,7 @@ func main() {
     })
 
     http.HandleFunc("/v1/ws", func(w http.ResponseWriter, r *http.Request) {
-        var conn, _ = upgrader.Upgrade(w, r, nil)
-        go func(conn *websocket.Conn) {
-            for {
-                mType, msg, _ := conn.ReadMessage()
-
-                conn.WriteMessage(mType, msg)
-            }
-        }(conn)
+        serveWs(hub, w, r)
     })
 
     port := ":3000"
