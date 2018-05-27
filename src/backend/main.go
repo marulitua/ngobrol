@@ -16,7 +16,10 @@ func main() {
                 return
         }
 
-        http.ServeFile(w, r, "public/index.html")
+        requestUrl := r.URL.Path
+        log.Println(requestUrl)
+
+        http.ServeFile(w, r, "public" + requestUrl)
     })
 
     http.HandleFunc("/v1/ws", func(w http.ResponseWriter, r *http.Request) {
