@@ -1,0 +1,11 @@
+[Unit]
+Description = Ngobrol backend service
+After = network.target
+[Service]
+Type=simple
+User=maruli
+WorkingDirectory=/home/maruli/ngobrol/current
+ExecStart =/home/maruli/ngobrol/current/bin/chat
+Restart=on-failure
+[Install]
+WantedBy = multi-user.target
