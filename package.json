@@ -1,0 +1,34 @@
+{
+  "name": "ngobrol",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marulitua/ngobrol.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "font-awesome": "^4.7.0",
+    "node-modules": "^1.0.1",
+    "parcel": "^1.8.1",
+    "perfect-scrollbar": "^1.3.0",
+    "vue": "^2.5.16",
+    "vue-hot-reload-api": "^2.3.0"
+  },
+  "devDependencies": {
+    "@vue/component-compiler-utils": "^1.3.0",
+    "node-sass": "^4.9.0",
+    "pug": "^2.0.3",
+    "vue-template-compiler": "^2.5.16"
+  },
+  "bugs": {
+    "url": "https://github.com/marulitua/ngobrol/issues"
+  },
+  "homepage": "https://github.com/marulitua/ngobrol#readme"
+}

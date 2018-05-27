@@ -1,3 +1,5 @@
+NODE_DIR := ./node_modules
+
 dev: clean serve
 
 serve: build
@@ -8,3 +10,15 @@ clean:
 
 build:
 	go build -o bin/chat -v src/*.go
+
+build_assets:
+	node node_modules/parcel/bin/cli.js build
+
+serve_assets: | $(NODE_DIR)
+	node node_modules/parcel/bin/cli.js public/index.html
+
+clean_assets:
+	rm -rf dist
+
+$(NODE_DIR): ;@echo "Instaling node dependency using npm...";
+	npm i

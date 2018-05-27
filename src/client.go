@@ -60,6 +60,7 @@ func (c *Client) readPumb() {
             break
         }
         message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+        log.Printf("got message => %s", message)
         c.hub.broadcast <- message
     }
 }
