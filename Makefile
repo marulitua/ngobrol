@@ -11,7 +11,7 @@ clean:
 build:
 	go build -o bin/chat -v src/backend/*.go
 
-build_assets:
+build_assets: | $(NODE_DIR)
 	node node_modules/parcel/bin/cli.js build -d public src/frontend/index.html
 
 serve_assets: | $(NODE_DIR)
@@ -22,3 +22,4 @@ clean_assets:
 
 $(NODE_DIR): ;@echo "Instaling node dependency using npm...";
 	npm i
+	go get -u "github.com/gorilla/websocket"
