@@ -6,7 +6,6 @@ import (
 )
 
 func main() {
-    log.Println("Hello World")
     hub := hubGenerator()
     go hub.watch()
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
