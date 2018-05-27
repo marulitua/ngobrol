@@ -1,10 +1,7 @@
-console.log("Hello World")
-var ws = new WebSocket("ws://" + document.location.host + "/v1/ws")
+import Vue from 'vue'
+import App from './App.vue'
 
-ws.addEventListener("message", function(e) {
-    console.log(e)
-});
-
-setTimeout(function() {
-    ws.send("foo")
-}, 2000)
+new Vue({
+  el: '#chat',
+  render: h => h(App),
+})

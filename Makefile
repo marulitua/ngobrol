@@ -12,13 +12,13 @@ build:
 	go build -o bin/chat -v src/backend/*.go
 
 build_assets:
-	node node_modules/parcel/bin/cli.js build
+	node node_modules/parcel/bin/cli.js build -d public src/frontend/index.html
 
 serve_assets: | $(NODE_DIR)
-	node node_modules/parcel/bin/cli.js src/frontend/index.html
+	node node_modules/parcel/bin/cli.js serve -d public src/frontend/index.html
 
 clean_assets:
-	rm -rf dist
+	rm -rf public/*
 
 $(NODE_DIR): ;@echo "Instaling node dependency using npm...";
 	npm i
