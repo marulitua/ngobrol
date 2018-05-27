@@ -2,7 +2,7 @@ NODE_DIR := ./node_modules
 
 dev: clean serve
 
-serve: build
+serve: build build_assets
 	bin/chat
 
 clean:

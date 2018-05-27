@@ -38,6 +38,23 @@
 <script>
 import ControlIcon from './ControlIcon.vue'
 import './tweenjs.js'
+//import ws from './websocket.js'
+
+let checker = null
+function reconect() {
+  checker = setInterval(function() {
+    try {
+      let ws = new WebSocket(`ws://${document.location.host}/v1/ws`)
+
+      clearInterval(checker)
+      console.log('ws restored')
+    }
+    catch(error) {
+    }
+  }, 5000)
+}
+
+let ws = new WebSocket(`ws://${document.location.host}/v1/ws`)
 
 export default {
   components: {
@@ -118,10 +135,13 @@ export default {
         'Morbi laoreet sollicitudin auctor. Nunc eu augue blandit, vulputate orci at, maximus.',
         'Nullam nec auctor massa. Sed felis ipsum, tincidunt vitae dapibus eu, ornare.'
       ]
-      this.chatdata.history.push({
+      let newMessage = {
         user: 0,
-        message: this.sendMessageInput
-      })
+        message: this.sendMessageInput,
+        event: 'user.send'
+      }
+      ws.send(JSON.stringify(newMessage))
+      this.chatdata.history.push(newMessage)
       this.sendMessageInput = '';
       this.scrollToBottom();
       let readTime = Math.floor(Math.random() * 5);
@@ -171,6 +191,15 @@ export default {
     }
     // this.scrollbar = new PerfectScrollbar(this.$refs.chat);
     // console.log(this.scrollbar)
+    //console.log(ws, ws.createConnection())
+    //ws.send('foo')
+    ws.onopen = e => {
+      ws.send(JSON.stringify({user: 0, event: 'chat.history', message: 'test'}))
+    };
+
+    ws.onclose = e => {
+      reconect()
+    }
   },
 };
 </script>

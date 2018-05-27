@@ -20,6 +20,7 @@ import ControlIcon from './ControlIcon.vue'
 import ControlAjax from './ControlAjax.vue'
 import ControlUser from './ControlChatUser.vue'
 import PerfectScrollbar from 'perfect-scrollbar'
+import EventBus from './event-bus'
 
 export default {
   components: {
@@ -42,7 +43,7 @@ export default {
       type: String,
       required: false,
       default: 'Hello World'
-    },
+    }
   },
   computed: {
   },
@@ -52,6 +53,14 @@ export default {
     },
     addUser: function(userData) {
       this.users.push(userData)
+    },
+    updateUsers: function(users) {
+      this.users.splice(0)
+      console.log('replace users', users)
+      users.forEach((user, userIndex) => {
+        user.photo = ''//photoData.results[userIndex].picture.thumbnail;
+        this.users.push(users)
+      })
     },
     filterByName: function(name) {
       let filteredList = [];

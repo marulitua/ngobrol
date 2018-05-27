@@ -38,7 +38,10 @@
 <script>
 import ChatPanel from './ControlChatPanel.vue'
 import ChatWindow from './ControlChatWindow.vue'
+import Vue from 'vue'
 import './app.scss'
+import EventBus from './event-bus'
+
 
 let url = {
   users: 'https://jsonblob.com/api/jsonBlob/34f2ac63-44d2-11e8-adbe-d35ed1c5ed6f',
@@ -58,7 +61,7 @@ export default {
         'vnd.api+json'
       ],
       iconset: 'fontawesome',
-      icons: [],
+      icons: []
       }
     },
     computed: {
@@ -155,20 +158,31 @@ export default {
         setTimeout(() => {
           el.classList.remove('wobble');
         }, 500)
+      },
+      handleMessage(msg) {
+        let chatPanel = this.$refs['chat-panel'];
+
+        let userData = [
+        {
+          "id": 1,
+          "name": "Leanne Graham",
+          "status": 1,
+          "username": "Bret"
+        },
+        {
+          "status": 0,
+          "username": "Antonette",
+          "name": "Ervin Howell",
+          "id": 2
+        }]
+        chatPanel.updateUsers(userData)
+        chatPanel.hideAjax();
+
       }
     },
     mounted: function() {
       let chatPanel = this.$refs['chat-panel'];
       chatPanel.isLoaded = false;
-
-      let userData = [  {    "id": 1,    "name": "Leanne Graham",    "status": 1,    "username": "Bret"  },  {    "status": 0,    "username": "Antonette",    "name": "Ervin Howell",    "id": 2  },  {    "status": 2,    "username": "Samantha",    "name": "Clementine Bauch",    "id": 3  },  {    "status": 2,    "username": "Karianne",    "name": "Patricia Lebsack",    "id": 4  },  {    "status": 1,    "username": "Kamren",    "name": "Chelsey Dietrich",    "id": 5  },  {    "status": 0,    "username": "Leopoldo_Corkery",    "name": "Mrs. Dennis Schulist",    "id": 6  },  {    "status": 1,    "username": "Elwyn.Skiles",    "name": "Kurtis Weissnat",    "id": 7  },  {    "status": 0,    "username": "Maxime_Nienow",    "name": "Nicholas Runolfsdottir V",    "id": 8  },  {    "status": 1,    "username": "Delphine",    "name": "Glenna Reichert",    "id": 9  },  {    "status": 0,    "username": "Moriah.Stanton",    "name": "Clementina DuBuque",    "id": 10  }]
-
-      userData.forEach((user, userIndex) => {
-        user.photo = ''//photoData.results[userIndex].picture.thumbnail;
-        chatPanel.addUser(user);
-      })
-      chatPanel.hideAjax();
-
       /*
       this.getData(url.users).then((userData) => {
         this.getData(url.photos).then((photoData) => {
@@ -180,6 +194,20 @@ export default {
         });
       });
       */
+    },
+    created() {
+      console.log('when created', EventBus)
+      let ws = new WebSocket(`ws://${document.location.host}/v1/ws`)
+      ws.onopen = e => {
+        ws.send(JSON.stringify({user: 0, event: 'user.list', message: 'test'}))
+      };
+
+      let app = this
+      ws.onmessage = e => {
+        let data = JSON.parse(e.data);
+        console.log('data', data)
+        app.handleMessage(data)
+      }
     }
   }
 </script>
