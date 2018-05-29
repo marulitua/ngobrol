@@ -204,8 +204,10 @@ export default {
 
       let app = this
       ws.onmessage = e => {
-        let data = JSON.parse(e.data);
-        console.log('data', data)
+        console.log("response data", e.data)
+        //let data = JSON.parse(e.data);
+        let data = 'data'
+        //console.log('data', e)
         app.handleMessage(data)
       }
     }

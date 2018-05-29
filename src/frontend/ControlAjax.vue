@@ -10,7 +10,7 @@ export default {
   components: {
     'control-icon': ControlIcon
   },
-  data: function() {
+  'data': function() {
     return {
       isShown: true,
     };
