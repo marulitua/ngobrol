@@ -36,9 +36,17 @@ type Client struct {
     send chan []byte
 }
 
+type Message struct {
+  // the json tag means this will serialize as a lowercased field
+  Message string `json:"message"`
+  Event string `json:"event"`
+  User int `json:"user"`
+}
+
 func (c *Client) readPumb() {
     defer func() {
         c.hub.unregister <- c
+        log.Println("terminating connection...")
         c.conn.Close()
     }()
     //log.Printf("Set read limit => %d", maxMessageSize)
@@ -51,16 +59,20 @@ func (c *Client) readPumb() {
     })
 
     for {
-        _, message, err := c.conn.ReadMessage()
-        //log.Printf("message size %T", c.conn.readRemaining)
+        m := Message{}
+
+        // receive a message using the codec
+        err := c.conn.ReadJSON(&m)
         if err != nil {
-            if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+            log.Println("Error reading json.", err)
+                if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
                 log.Printf("error: %v", err)
             }
-            break
+            return
         }
-        message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-        log.Printf("got message => %s", message)
+
+        log.Printf("Received message: %v", m)
+        message := bytes.TrimSpace(bytes.Replace([]byte(m.Message), newline, space, -1))
         c.hub.broadcast <- message
     }
 }
@@ -76,25 +88,22 @@ func (c *Client) writePumb() {
         case message, ok := <- c.send:
             c.conn.SetWriteDeadline(time.Now().Add(writeWait))
             if !ok {
+                log.Println("cannot set write deadline", websocket.CloseMessage)
                 c.conn.WriteMessage(websocket.CloseMessage, []byte{})
                 return
             }
 
-            w, err := c.conn.NextWriter(websocket.TextMessage)
-            if err != nil {
-                return
+            response := Message{
+                string(message),
+                "user.registered",
+                4,
             }
-            w.Write(message)
+            log.Printf("response %v", response)
 
-            n := len(c.send)
-            for i := 0; i < n; i++ {
-                w.Write(newline)
-                w.Write(<-c.send)
+            if err := c.conn.WriteJSON(&response); err != nil {
+                log.Println("cannot write", err)
             }
 
-            if err := w.Close(); err != nil {
-                return
-            }
         case <-ticker.C:
             c.conn.SetWriteDeadline(time.Now().Add(writeWait))
             if err := c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {

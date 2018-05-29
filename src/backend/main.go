@@ -11,8 +11,8 @@ func main() {
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
         if r.Method != "GET" {
-                http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-                return
+            http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+            return
         }
 
         requestUrl := r.URL.Path
